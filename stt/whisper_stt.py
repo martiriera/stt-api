@@ -1,8 +1,9 @@
 import torch
 from transformers import AutoModelForSpeechSeq2Seq, AutoProcessor, pipeline
-# from datasets import load_dataset
+import time
 
 def transcribe(audio_path, model_id):
+    start_time = time.time()
     device = "cuda:0" if torch.cuda.is_available() else "cpu"
     torch_dtype = torch.float16 if torch.cuda.is_available() else torch.float32
 
@@ -23,9 +24,8 @@ def transcribe(audio_path, model_id):
         chunk_length_s=30,
     )
 
-    # load_dataset("distil-whisper/librispeech_long", "clean", split="validation")
-
     result = pipe(audio_path, return_timestamps=True)
-    print("Transcription complete.")
 
-    return result["text"]
+    end_time = time.time()
+    duration = end_time - start_time
+    return result["text"], duration

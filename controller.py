@@ -7,15 +7,18 @@ def execute():
   root_path = os.path.dirname(__file__)
 
   try:
-    print("Transcribing audio...")
+    print("Downloading audio...")
     mp3_url = "https://traffic.omny.fm/d/clips/47dc05c7-7279-4c6f-9b31-ae74013297d9/e4e46f35-5cd4-49e0-b007-af030077c851/563da055-9bb2-46cd-aa1c-b1540104644e/audio.mp3?dist=RSS"
     id = downloader.getIdFromUrl(mp3_url)
 
     audio_path = os.path.join(root_path, 'tmp', f'audio_{id}.mp3')
 
     downloader.download_mp3(mp3_url, audio_path)
+    print("Audio downloaded")
 
-    transcription = transcribe(audio_path, "openai/whisper-large-v3-turbo")
+    print("Transcribing audio...")
+    transcription, duration = transcribe(audio_path, "openai/whisper-large-v3-turbo")
+    print(f"Transcription complete. Duration: {duration:.2f} seconds.")
 
     print("Storing transcription...")
     timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
@@ -23,12 +26,11 @@ def execute():
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
     with open(output_path, "w") as file:
       file.write(transcription)
-
     print(f"Transcription stored at {output_path}")
 
     if os.path.exists(audio_path):
       os.remove(audio_path)
-      print(f"Deleted the file: {audio_path}")
+      print(f"Deleted the source file: {audio_path}")
     else:
        print(f"The file does not exist: {audio_path}")
 
