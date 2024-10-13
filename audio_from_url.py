@@ -3,7 +3,7 @@ from pydub import AudioSegment
 from io import BytesIO
 
 # Function to download and play an MP3 file from a URL
-def download_and_read_mp3(url):
+def download_and_read_mp3(url, wav_convert=False):
     # Download the audio file
     response = requests.get(url)
 
@@ -16,9 +16,10 @@ def download_and_read_mp3(url):
         print(f"Audio length: {len(audio)} milliseconds")
         print(f"Channels: {audio.channels}, Frame rate: {audio.frame_rate}")
 
-        # Convert the audio to WAV format with a sampling frequency of 16k
-        audio = audio.set_frame_rate(16000)
-        audio.export("output.wav", format="wav")
+        if wav_convert:
+            # Convert the audio to WAV format with a sampling frequency of 16k
+            audio = audio.set_frame_rate(16000)
+            audio.export("output.wav", format="wav")
 
         return audio
     else:
