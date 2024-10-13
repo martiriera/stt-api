@@ -16,15 +16,16 @@ SetLogLevel(0)
 root_dir = os.path.dirname(os.path.abspath(__file__))
 
 # Define relative paths
-input_wav_path = os.path.join(root_dir, "output.wav")
-trimmed_wav_path = os.path.join(root_dir, "test_trimmed.wav")
+input_wav_path = os.path.join(root_dir, "media/output.wav")
+trimmed_wav_path = os.path.join(root_dir, "media/test_trimmed.wav")
 model_path = os.path.join(root_dir, "models/vosk-model-small-ca-0.4")
 
 # Start timing
 start_time = time.time()
 
+trim_wav(input_wav_path, trimmed_wav_path, 15, 16)
+
 try:
-  trim_wav(input_wav_path, trimmed_wav_path, 15, 16)
   wf = wave.open(trimmed_wav_path, "rb")
 except FileNotFoundError:
   print("Audio file not found.")
@@ -44,11 +45,8 @@ rec = KaldiRecognizer(model, wf.getframerate())
 rec.SetWords(True)
 rec.SetPartialWords(True)
 
-output_text_path = os.path.join(root_dir, "transcription.txt")
-
-# Generate a unique filename based on the current date and time
 current_time = datetime.now().strftime("%Y%m%d%H%M%S")
-output_text_path = os.path.join(root_dir, f"transcription_{current_time}.txt")
+output_text_path = os.path.join(root_dir.join("/transcriptions/vosk"), f"transcription_{current_time}.txt")
 
 with open(output_text_path, "a") as f:
   while True:
@@ -66,7 +64,5 @@ with open(output_text_path, "a") as f:
 
 # End timing
 end_time = time.time()
-
-# Print execution duration
 execution_duration = end_time - start_time
 print(f"Execution duration: {execution_duration:.2f} seconds")

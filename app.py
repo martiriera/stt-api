@@ -1,4 +1,3 @@
-import os
 import atexit
 from psycopg2 import pool
 from dotenv import load_dotenv
